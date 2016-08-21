@@ -2,7 +2,10 @@
   "name": "d3_demo",
   "version": "1.0.0",
   "description": "Code example for node and d3",
-  "main": "main.js",
+  "main": "app/main.js",
+  "scripts": {
+    "start": "node app/main.js"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/briancmpbll/d3_demo.git"
@@ -16,5 +19,13 @@
   "dependencies": {
     "express": "^4.14.0",
     "socket.io": "^1.4.8"
+  },
+  "devDependencies": {
+    "grunt": "^1.0.1",
+    "grunt-babel": "^6.0.0",
+    "grunt-contrib-jshint": "^1.0.0",
+    "grunt-contrib-less": "^1.4.0",
+    "grunt-contrib-uglify": "^2.0.0",
+    "grunt-contrib-watch": "^1.0.0"
   }
 }
