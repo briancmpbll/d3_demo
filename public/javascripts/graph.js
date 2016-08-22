@@ -1,5 +1,3 @@
-var _socket = io();
-
 var _data = [];
 var _xPos = null;
 var _mouseOnGraph = false;
@@ -7,8 +5,9 @@ var _mouseOnGraph = false;
 // Declare functions
 var bisectDate = d3.bisector(function(d) { return d.date; }).left;
 
-// Parse the date / time
+// Setup formatting
 var formatDate = d3.time.format("%d-%b");
+var formatValue = d3.format('.2f');
 
 // Turn toolip on or off.
 function setTooltipVisibility() {
@@ -40,7 +39,7 @@ function moveTooltip() {
       // Set the value text
       focus.selectAll("text.value")
         .transition()
-        .text(d.value);
+        .text(formatValue(d.value));
 
       // Set the time text
       focus.selectAll("text.date")
@@ -73,8 +72,8 @@ function updateGraph() {
       yAxis.transition().call(y.axis);
 
       // Redraw line path.
-      linePath.transition().attr("d", line(_data));
-      areaPath.transition().attr("d", area(_data));
+      linePath.attr("d", line(_data));
+      areaPath.attr("d", area(_data));
     });
 
   moveTooltip();
@@ -189,4 +188,14 @@ d3.json("data", function(error, data) {
   _data = data;
 
   updateGraph();
+});
+
+var socket = io();
+socket.on('data', function(data) {
+  data.date = new Date(data.date);
+  _data.push(data);
+
+  updateGraph();
+
+  _data.shift();
 });
