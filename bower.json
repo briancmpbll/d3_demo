@@ -1,0 +1,22 @@
+{
+  "name": "d3_demo",
+  "description": "Code example for node and d3",
+  "main": "app/main.js",
+  "authors": [
+    "Brian Campbell <briancmpbll@gmail.com>"
+  ],
+  "license": "ISC",
+  "homepage": "https://github.com/briancmpbll/d3_demo",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "d3-jetpack": "^1.0.2",
+    "d3": "3.x"
+  }
+}
