@@ -10,7 +10,7 @@ let sequelize = new Sequelize('demo-db', null, null, {
 });
 
 let Data = sequelize.define('data', {
-  date: Sequelize.DATEONLY,
+  date: Sequelize.DATE,
   value: Sequelize.FLOAT
 });
 
