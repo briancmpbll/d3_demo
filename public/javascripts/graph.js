@@ -1,7 +1,28 @@
-var _data = [];
+var _socket = io();
 
+var _data = [];
+var _xPos = null;
+var _mouseOnGraph = false;
+
+// Declare functions
+var bisectDate = d3.bisector(function(d) { return d.date; }).left;
+
+// Parse the date / time
+var parseDate = d3.time.format("%d-%b-%y").parse;
+var formatDate = d3.time.format("%d-%b");
+
+// Turn toolip on or off.
+function setTooltipVisibility() {
+  focus.classed('hidden', _data.length < 1 || !_mouseOnGraph);
+}
+
+// Move the tooltip to the closest datapoint to the mouse.
 function moveTooltip() {
-  var x0 = x.invert(d3.mouse(this)[0]);
+  if (_xPos === null) {
+    return;
+  }
+
+  var x0 = x.invert(_xPos);
   var i = bisectDate(_data, x0, 1);
   var d0 = _data[i - 1];
   var d1 = _data[i];
@@ -39,15 +60,34 @@ function moveTooltip() {
     });
 }
 
+function updateGraph() {
+  // Scale the range of the data
+  x.domain(d3.extent(_data, function(d) { return d.date; }));
+  y.domain([0, d3.max(_data, function(d) { return d.close; })]);
+
+  d3.transition()
+    .duration(100)
+    .ease('linear')
+    .each(function() {
+      // Redraw the axes
+      xAxis.transition().call(x.axis);
+      yAxis.transition().call(y.axis);
+
+      // Redraw line path.
+      linePath.transition().attr("d", line(_data));
+      areaPath.transition().attr("d", area(_data));
+    });
+
+  moveTooltip();
+  setTooltipVisibility();
+}
+
+// Initialize all graph elements
+
 // Set the dimensions of the canvas / graph
 var margin = {top: 30, right: 20, bottom: 30, left: 50};
 var width = 1100 - margin.left - margin.right;
 var height = 550 - margin.top - margin.bottom;
-
-// Parse the date / time
-var parseDate = d3.time.format("%d-%b-%y").parse;
-var formatDate = d3.time.format("%d-%b");
-var bisectDate = d3.bisector(function(d) { return d.date; }).left;
 
 // Set the ranges
 var x = d3.time.scale().range([0, width]);
@@ -87,9 +127,7 @@ var xAxis = svg.append("g.x.axis")
 // Add the Y Axis
 var yAxis = svg.append("g.y.axis");
 
-var focus = svg.append("g")
-  .style("display", "none")
-  .attr('class', 'focus');
+var focus = svg.append("g.focus.hidden");
 
 // Append the x line
 focus.append("line.x")
@@ -124,38 +162,32 @@ focus.append("text")
   .attr("dy", "1em");
 
 // Append the rectangle to capture mouse
-svg.append("rect")
+var rect = svg.append("rect")
   .attr("width", width)
   .attr("height", height)
   .style("fill", "none")
   .style("pointer-events", "all")
-  .on("mouseover", function() { focus.style("display", null); })
-  .on("mouseout", function() { focus.style("display", "none"); })
-  .on("mousemove", moveTooltip);
+  .on("mouseover", function() {
+    _mouseOnGraph = true;
+    setTooltipVisibility();
+  })
+  .on("mouseout", function() {
+    _mouseOnGraph = false;
+    setTooltipVisibility();
+  })
+  .on("mousemove", function() {
+    _xPos = d3.mouse(rect[0][0])[0];
+    moveTooltip();
+  });
 
 // Get the data
 d3.csv("data.csv", function(error, data) {
   data.forEach(function(d) {
       d.date = parseDate(d.date);
-      d.close = +d.close;
+      d.close = + d.close;
   });
 
   _data = data;
 
-  // Scale the range of the data
-  x.domain(d3.extent(_data, function(d) { return d.date; }));
-  y.domain([0, d3.max(_data, function(d) { return d.close; })]);
-
-  d3.transition()
-    .duration(100)
-    .ease('linear')
-    .each(function() {
-      // Redraw the axes
-      xAxis.transition().call(x.axis);
-      yAxis.transition().call(y.axis);
-
-      // Redraw line path.
-      linePath.transition().attr("d", line(_data));
-      areaPath.transition().attr("d", area(_data));
-    });
+  updateGraph();
 });

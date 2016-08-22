@@ -18,7 +18,9 @@
   "homepage": "https://github.com/briancmpbll/d3_demo#readme",
   "dependencies": {
     "express": "^4.14.0",
-    "socket.io": "^1.4.8"
+    "sequelize": "^3.24.1",
+    "socket.io": "^1.4.8",
+    "sqlite3": "^3.1.4"
   },
   "devDependencies": {
     "grunt": "^1.0.1",

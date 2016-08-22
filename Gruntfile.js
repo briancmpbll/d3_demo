@@ -5,7 +5,7 @@ module.exports = (grunt) => {
       options: {
         jshintrc: true
       },
-      files: ['Gruntfile.js', 'app/**/*.js', 'src/javascripts/*.js']
+      files: ['Gruntfile.js', 'app/**/*.js', 'public/javascripts/*.js']
     },
     less: {
       development: {
