@@ -8,7 +8,6 @@ var _mouseOnGraph = false;
 var bisectDate = d3.bisector(function(d) { return d.date; }).left;
 
 // Parse the date / time
-var parseDate = d3.time.format("%d-%b-%y").parse;
 var formatDate = d3.time.format("%d-%b");
 
 // Turn toolip on or off.
@@ -36,12 +35,12 @@ function moveTooltip() {
       focus.selectAll("circle, text, .x")
         .transition()
         .attr("transform",
-          "translate(" + x(d.date) + "," + y(d.close) + ")");
+          "translate(" + x(d.date) + "," + y(d.value) + ")");
 
       // Set the value text
       focus.selectAll("text.value")
         .transition()
-        .text(d.close);
+        .text(d.value);
 
       // Set the time text
       focus.selectAll("text.date")
@@ -50,12 +49,12 @@ function moveTooltip() {
 
       focus.select(".x")
         .transition()
-        .attr("y2", height - y(d.close));
+        .attr("y2", height - y(d.value));
 
       focus.select(".y")
         .transition()
         .attr("transform",
-          "translate(" + width * -1 + "," + y(d.close) + ")")
+          "translate(" + width * -1 + "," + y(d.value) + ")")
         .attr("x2", width + width);
     });
 }
@@ -63,7 +62,7 @@ function moveTooltip() {
 function updateGraph() {
   // Scale the range of the data
   x.domain(d3.extent(_data, function(d) { return d.date; }));
-  y.domain([0, d3.max(_data, function(d) { return d.close; })]);
+  y.domain([0, d3.max(_data, function(d) { return d.value; })]);
 
   d3.transition()
     .duration(100)
@@ -100,12 +99,12 @@ y.axis = d3.svg.axis().scale(y).orient("left");
 // Define the line
 var line = d3.svg.line()
   .x(function(d) { return x(d.date); })
-  .y(function(d) { return y(d.close); });
+  .y(function(d) { return y(d.value); });
 
 var area = d3.svg.area()
   .x(function(d) { return x(d.date); })
   .y0(height)
-  .y1(function(d) { return y(d.close); });
+  .y1(function(d) { return y(d.value); });
 
 // Adds the svg canvas
 var svg = d3.select(".panel-body").append("svg.graph")
@@ -181,10 +180,10 @@ var rect = svg.append("rect")
   });
 
 // Get the data
-d3.csv("data.csv", function(error, data) {
+d3.json("data", function(error, data) {
   data.forEach(function(d) {
-      d.date = parseDate(d.date);
-      d.close = + d.close;
+      d.date = new Date(d.date);
+      d.value = + d.value;
   });
 
   _data = data;

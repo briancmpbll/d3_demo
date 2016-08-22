@@ -3,10 +3,13 @@ var app = express();
 var http = require('http').Server(app);
 var io = require('socket.io')(http);
 
+var data = require('./routes/data');
+
 app.use(express.static('public'));
 app.use('/vendor', express.static('bower_components'));
+app.use('/data', data);
 
-io.on('connection', (socket)=> {
+io.on('connection', function(socket) {
   console.log('A user connected');
 
   socket.on('disconnect', function() {
@@ -14,6 +17,6 @@ io.on('connection', (socket)=> {
   });
 });
 
-http.listen(3000, ()=> {
+http.listen(3000, function() {
   console.log('Listening on port 3000');
 });

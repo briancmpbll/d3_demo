@@ -1,3 +1,5 @@
 node_modules
 bower_components/
 d3_demo.sublime-workspace
+npm-debug.log
+public/css/
