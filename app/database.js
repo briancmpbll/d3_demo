@@ -1,3 +1,6 @@
+/* jshint node: true */
+'use strict';
+
 const Sequelize = require('sequelize');
 
 let sequelize = new Sequelize('demo-db', null, null, {

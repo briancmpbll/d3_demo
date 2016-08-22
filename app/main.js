@@ -1,3 +1,6 @@
+/* jshint node: true */
+'use strict';
+
 const express = require('express');
 const app = express();
 const data = require('./routes/data');
